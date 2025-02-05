@@ -1,0 +1,49 @@
+#include <stdio.h>
+void sjfScheduling(int processes[], int n, int burst_time[]) {
+    int waiting_time[n], turn_around_time[n];
+    int total_waiting_time = 0, total_turn_around_time = 0;
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (burst_time[i] > burst_time[j]) {
+                int temp = burst_time[i];
+                burst_time[i] = burst_time[j];
+                burst_time[j] = temp;
+
+                int temp_process = processes[i];
+                processes[i] = processes[j];
+                processes[j] = temp_process;
+            }
+        }
+    }
+    waiting_time[0] = 0; 
+
+    for (int i = 1; i < n; i++) {
+        waiting_time[i] = waiting_time[i - 1] + burst_time[i - 1];
+    }
+
+    for (int i = 0; i < n; i++) {
+        turn_around_time[i] = burst_time[i] + waiting_time[i];
+        total_waiting_time += waiting_time[i];
+        total_turn_around_time += turn_around_time[i];
+    }
+
+    printf("Processes  Burst Time  Waiting Time  Turnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("   P%d\t\t%d\t\t%d\t\t%d\n", processes[i], burst_time[i], waiting_time[i], turn_around_time[i]);
+    }
+
+    printf("\nAverage Waiting Time: %.2f\n", (float)total_waiting_time / n);
+    printf("Average Turnaround Time: %.2f\n", (float)total_turn_around_time / n);
+}
+int main() {
+    int n = 4;
+    int processes[] = {1, 2, 3, 4};
+    int burst_time[] = {6, 8, 7, 3}; 
+
+    sjfScheduling(processes, n, burst_time);
+    return 0;
+}
+
+
+
